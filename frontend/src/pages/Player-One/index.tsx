@@ -17,7 +17,7 @@ const PlayerOne = () => {
 	console.log("🚀 ~ file: index.tsx ~ line 17 ~ PlayerOne ~ data", data);
 
 	useEffect(() => {
-		const newSocket = createSocket("room-one", "player-one");
+		const newSocket = createSocket("room-one");
 		newSocket?.emit("join-game", {
 			playerName: "player-one",
 		});
@@ -34,7 +34,7 @@ const PlayerOne = () => {
 	useEffect(() => {
 		if (socket) {
 			socket.on("response", (data: any) => {
-				console.log("🚀 ~ file: index.tsx ~ line 37 ~ socket.on ~ data", data);
+				console.log("player-one-connected", socket.connected);
 			});
 		}
 	}, [socket]);

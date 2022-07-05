@@ -4,6 +4,7 @@ import router from "./routes";
 import { Server } from "socket.io";
 import cors from "cors";
 import { database } from "./db";
+import socketConnectionController from "./controllers/socketConnectionController";
 //initialise connection
 database;
 dotenv.config();
@@ -23,22 +24,5 @@ const io = new Server(server, { cors: { origin: "*" } });
 
 //initializing the socket io connection
 io.on("connection", (socket) => {
-	console.log("connected to socket ");
-	socket.emit("message", "message from server");
-
-	socket.on("join-game", ({ playerName }) => {
-		console.log(
-			"🚀 ~ file: server.ts ~ line 33 ~ socket.on ~ playerName",
-			playerName
-		);
-		console.log("joined");
-		socket.emit("response", {
-			data: "some data in response",
-		});
-	});
-
-	// When a player disconnects
-	socket.on("disconnect", () => {
-		console.log("disconnected");
-	});
+	socketConnectionController.main(socket);
 });

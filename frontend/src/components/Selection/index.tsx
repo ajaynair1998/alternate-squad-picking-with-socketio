@@ -35,6 +35,7 @@ const SingleColumnSelection = ({ items, color, disabled }: IProps) => {
 					{items.map((item) => {
 						return (
 							<SingleItem
+								key={item.id}
 								id={item.id}
 								name={item.name}
 								color={color}
