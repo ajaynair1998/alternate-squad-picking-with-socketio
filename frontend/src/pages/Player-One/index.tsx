@@ -5,16 +5,21 @@ import { DefaultEventsMap } from "@socket.io/component-emitter";
 import { createSocket } from "../../configs";
 import { Box, Grid } from "@mui/material";
 import Room from "../../components/Room";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { IStore } from "../../helpers/interfaces";
+import {
+	setSelectedPlayerId,
+	setSelectedroomId,
+	setSelectedSocket,
+} from "../../redux/reducers/SocketDataReducer";
 
 const PlayerOne = () => {
+	let dispatch = useDispatch();
 	const [socket, setSocket] = useState<
 		Socket<DefaultEventsMap, DefaultEventsMap> | undefined | null
 	>(null);
 	const [joined, setJoined] = useState(false);
 	const { data } = useSelector((state: IStore) => state.socketStore);
-	console.log("🚀 ~ file: index.tsx ~ line 17 ~ PlayerOne ~ data", data);
 
 	useEffect(() => {
 		const newSocket = createSocket("room-one");
@@ -22,6 +27,10 @@ const PlayerOne = () => {
 			playerName: "player-one",
 		});
 		if (newSocket) {
+			dispatch(setSelectedSocket(newSocket));
+			dispatch(setSelectedPlayerId("player-one"));
+			dispatch(setSelectedroomId("room-one"));
+
 			setSocket(newSocket);
 			setJoined(true);
 		}
@@ -38,6 +47,10 @@ const PlayerOne = () => {
 			});
 		}
 	}, [socket]);
+
+	useEffect(() => {
+		console.log(data);
+	}, [data]);
 
 	return (
 		<Box>

@@ -19,6 +19,19 @@ const socketConnectionController = {
 				});
 			});
 
+			socket.on(
+				"action-on-player",
+				({ roomId, playerId, selectedSquadPlayerId }) => {
+					console.log("action-on-player");
+					socketConnectionController.action_on_player(
+						socket,
+						roomId,
+						playerId,
+						selectedSquadPlayerId
+					);
+				}
+			);
+
 			// When a player disconnects
 			socket.on("disconnect", () => {
 				// socketConnectionController.create_room(socket);
@@ -72,8 +85,23 @@ const socketConnectionController = {
 	},
 
 	action_on_player: async (
-		socket?: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+		socket?: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+		roomId?: string,
+		playerId?: string,
+		selectedSquadPlayerId?: string
 	) => {
+		console.log(
+			"🚀 ~ file: socketConnectionController.ts ~ line 80 ~ selectedSquadPlayerId",
+			selectedSquadPlayerId
+		);
+		console.log(
+			"🚀 ~ file: socketConnectionController.ts ~ line 80 ~ playerId",
+			playerId
+		);
+		console.log(
+			"🚀 ~ file: socketConnectionController.ts ~ line 80 ~ roomId",
+			roomId
+		);
 		try {
 		} catch (err) {
 			console.log(err);

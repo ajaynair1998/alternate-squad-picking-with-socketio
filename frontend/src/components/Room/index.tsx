@@ -1,6 +1,8 @@
 import React from "react";
 import { Grid } from "@mui/material";
 import SingleColumnSelection from "../Selection";
+import { useSelector } from "react-redux";
+import { IStore } from "../../helpers/interfaces";
 
 export interface ISingleItemProps {
 	name: string;
@@ -28,16 +30,25 @@ const defaultItems: ISingleItemProps[] = [
 	{ name: "gohan", id: "asffzxgase" },
 ];
 
-const Room = () => {
+const Room = ({ playerId }: { playerId?: string }) => {
+	let { data } = useSelector((state: IStore) => state.socketStore);
+	console.log("🚀 ~ file: index.tsx ~ line 35 ~ Room ~ data", data);
+	const handleClick = async (
+		selectedSquadPlayerId?: string,
+		roomId?: string
+	): Promise<boolean> => {
+		try {
+			return true;
+		} catch (err) {
+			console.log(err);
+			return false;
+		}
+	};
 	return (
 		<Grid container direction={"row"} width={"70%"} mx={"auto"} mt={"200px"}>
-			<SingleColumnSelection
-				items={defaultItems}
-				color={"success"}
-				disabled={true}
-			/>
-			<SingleColumnSelection items={defaultItems} />
-			<SingleColumnSelection items={defaultItems} color={"error"} />
+			<SingleColumnSelection color={"success"} />
+			<SingleColumnSelection />
+			<SingleColumnSelection color={"error"} />
 		</Grid>
 	);
 };

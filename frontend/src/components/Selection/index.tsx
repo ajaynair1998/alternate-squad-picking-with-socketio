@@ -5,6 +5,8 @@ import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import { ISingleItemProps } from "../Room";
+import { useSelector } from "react-redux";
+import { IStore } from "../../helpers/interfaces";
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -14,8 +16,7 @@ const Item = styled(Paper)(({ theme }) => ({
 	color: theme.palette.text.secondary,
 }));
 interface IProps {
-	disabled?: boolean;
-	items: ISingleItemProps[];
+	selectedSide?: string;
 	color?:
 		| "inherit"
 		| "success"
@@ -27,12 +28,20 @@ interface IProps {
 		| undefined;
 }
 
-const SingleColumnSelection = ({ items, color, disabled }: IProps) => {
+const SingleColumnSelection = ({ color, selectedSide }: IProps) => {
+	let { data } = useSelector((store: IStore) => store.socketStore);
+	let players: any[] = [];
+	let disabled: boolean = false;
+
+	if (selectedSide === "playerOne") {
+		players = data.playerOneSquad;
+		disabled = data.playerOneDisabled;
+	}
 	return (
 		<Grid item xs={3} mx={"auto"}>
 			<Box sx={{ width: "100%" }}>
 				<Stack spacing={2}>
-					{items.map((item) => {
+					{players.map((item) => {
 						return (
 							<SingleItem
 								key={item.id}
