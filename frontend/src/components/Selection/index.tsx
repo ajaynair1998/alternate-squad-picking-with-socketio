@@ -1,5 +1,5 @@
 import { Button, Grid } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -7,6 +7,7 @@ import { styled } from "@mui/material/styles";
 import { ISingleItemProps } from "../Room";
 import { useSelector } from "react-redux";
 import { IStore } from "../../helpers/interfaces";
+import { setPlayerOneDisabled } from "../../redux/reducers/SocketDataReducer";
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -30,18 +31,22 @@ interface IProps {
 
 const SingleColumnSelection = ({ color, selectedSide }: IProps) => {
 	let { data } = useSelector((store: IStore) => store.socketStore);
-	let players: any[] = [];
-	let disabled: boolean = false;
+	let [players, setPlayers] = useState<{ name: string; id: string }[]>([]);
+	let [disabled, setDisabled] = useState<boolean>(false);
 
-	if (selectedSide === "playerOne") {
-		players = data.playerOneSquad;
-		disabled = data.playerOneDisabled;
-	}
+	useEffect(() => {
+		console.log(data);
+		if (selectedSide === "playerOne") {
+			setPlayers(data.playerOneSquad);
+			setDisabled(data.playerOneDisabled);
+		}
 
-	if (selectedSide === "selection-column") {
-		players = data.allSquadPlayers;
-		disabled = false;
-	}
+		if (selectedSide === "selection-column") {
+			setPlayers(data.allSquadPlayers);
+			setDisabled(false);
+		}
+	}, [data]);
+
 	return (
 		<Grid item xs={3} mx={"auto"}>
 			<Box sx={{ width: "100%" }}>

@@ -8,10 +8,13 @@ import Room from "../../components/Room";
 import { useDispatch, useSelector } from "react-redux";
 import { IStore } from "../../helpers/interfaces";
 import {
+	setSelectedAllSquadPlayers,
 	setSelectedPlayerId,
+	setSelectedPlayerOneSquad,
 	setSelectedroomId,
 	setSelectedSocket,
 } from "../../redux/reducers/SocketDataReducer";
+import { isNullishCoalesce } from "typescript";
 
 const PlayerOne = () => {
 	let dispatch = useDispatch();
@@ -24,7 +27,8 @@ const PlayerOne = () => {
 	useEffect(() => {
 		const newSocket = createSocket("room-one");
 		newSocket?.emit("join-game", {
-			playerName: "player-one",
+			playerId: data.playerId,
+			roomId: data.roomId,
 		});
 		if (newSocket) {
 			dispatch(setSelectedSocket(newSocket));
@@ -42,14 +46,28 @@ const PlayerOne = () => {
 
 	useEffect(() => {
 		if (socket) {
-			socket.on("response", (data: any) => {
-				console.log("player-one-connected", socket.connected);
+			socket.on("response-for-join-game", (data: any) => {
+				if (data) {
+					console.log("player-one-connected", socket.connected, data.data);
+
+					if (data && data.data && data.data.id) {
+						console.log(data.data.playersAvailable);
+						dispatch(setSelectedAllSquadPlayers(data.data.playersAvailable));
+					}
+				}
 			});
 		}
 	}, [socket]);
 
 	useEffect(() => {
-		console.log(data);
+		console.log("data changed");
+		if (data.socket) {
+			console.log(data.roomId);
+			data?.socket?.emit("join-game", {
+				playerId: data.playerId,
+				roomId: data.roomId,
+			});
+		}
 	}, [data]);
 
 	return (

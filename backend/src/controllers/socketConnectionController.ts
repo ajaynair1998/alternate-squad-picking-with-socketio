@@ -12,11 +12,12 @@ const socketConnectionController = {
 		try {
 			socket.emit("message", "message from server");
 
-			socket.on("join-game", ({ playerName }) => {
-				console.log("joined-player", playerName);
-				socket.emit("response", {
-					data: "some data in response",
-				});
+			socket.on("join-game", ({ playerName, roomId, playerId }) => {
+				socketConnectionController.join_game(roomId, socket, playerId);
+				// console.log("joined-player", playerName);
+				// socket.emit("response", {
+				// 	data: "some data in response",
+				// });
 			});
 
 			socket.on(
@@ -79,6 +80,32 @@ const socketConnectionController = {
 			};
 			await database.set("rooms", JSON.stringify(rooms));
 			console.log("room created");
+		} catch (err) {
+			console.log(err);
+		}
+	},
+	join_game: async (
+		roomId: string,
+		socket?: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+		playerId?: string
+	) => {
+		console.log("data-recieved in join-game", roomId, playerId);
+		console.log(
+			"🚀 ~ file: socketConnectionController.ts ~ line 93 ~ roomId",
+			roomId
+		);
+		if (socket) {
+			let roomData: any = await database.get("rooms");
+			if (roomData) {
+				roomData = JSON.parse(roomData);
+				let playerRoom = roomData[roomId];
+				if (playerRoom) {
+					console.log("room found");
+				}
+				socket.emit("response-for-join-game", { data: playerRoom });
+			}
+		}
+		try {
 		} catch (err) {
 			console.log(err);
 		}
