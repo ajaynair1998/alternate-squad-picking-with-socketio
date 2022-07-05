@@ -1,5 +1,5 @@
 import { Button, Grid } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
@@ -37,6 +37,11 @@ const SingleColumnSelection = ({ color, selectedSide }: IProps) => {
 		players = data.playerOneSquad;
 		disabled = data.playerOneDisabled;
 	}
+
+	if (selectedSide === "selection-column") {
+		players = data.allSquadPlayers;
+		disabled = false;
+	}
 	return (
 		<Grid item xs={3} mx={"auto"}>
 			<Box sx={{ width: "100%" }}>
@@ -49,6 +54,7 @@ const SingleColumnSelection = ({ color, selectedSide }: IProps) => {
 								name={item.name}
 								color={color}
 								disabled={disabled}
+								selectedSide={selectedSide}
 							/>
 						);
 					})}
@@ -58,7 +64,29 @@ const SingleColumnSelection = ({ color, selectedSide }: IProps) => {
 	);
 };
 
-const SingleItem = ({ name, id, color, disabled }: ISingleItemProps) => {
+const SingleItem = ({
+	name,
+	id,
+	color,
+	disabled,
+	selectedSide,
+}: ISingleItemProps) => {
+	let { data } = useSelector((store: IStore) => store.socketStore);
+	let socket = data.socket;
+
+	const handleClick = (selectedSquadPlayerId: string): any => {
+		try {
+			if (socket && selectedSide === "selection-column") {
+				socket.emit("action-on-player", {
+					playerId: data.playerId,
+					roomId: data.roomId,
+					selectedSquadPlayerId: selectedSquadPlayerId,
+				});
+			}
+		} catch (err) {
+			console.log(err);
+		}
+	};
 	return (
 		<Button
 			key={id}
@@ -66,7 +94,7 @@ const SingleItem = ({ name, id, color, disabled }: ISingleItemProps) => {
 			variant="contained"
 			size="small"
 			color={`${color ? color : "primary"}`}
-			// onClick={handleAllRight}
+			onClick={() => handleClick(id)}
 			disabled={disabled}
 			aria-label="move all right"
 		>

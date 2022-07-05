@@ -7,6 +7,7 @@ import { IStore } from "../../helpers/interfaces";
 export interface ISingleItemProps {
 	name: string;
 	id: string;
+	selectedSide?: string;
 	disabled?: boolean;
 	color?:
 		| "inherit"
@@ -46,9 +47,9 @@ const Room = ({ playerId }: { playerId?: string }) => {
 	};
 	return (
 		<Grid container direction={"row"} width={"70%"} mx={"auto"} mt={"200px"}>
-			<SingleColumnSelection color={"success"} />
-			<SingleColumnSelection />
-			<SingleColumnSelection color={"error"} />
+			<SingleColumnSelection color={"success"} selectedSide="playerOne" />
+			<SingleColumnSelection selectedSide="selection-column" />
+			<SingleColumnSelection color={"error"} selectedSide="playerTwo" />
 		</Grid>
 	);
 };

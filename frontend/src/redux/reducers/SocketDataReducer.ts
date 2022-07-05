@@ -9,7 +9,7 @@ export const SocketDataSlice = createSlice({
 			playerId: null,
 			playerOneSquad: [],
 			playerTwoSquad: [],
-			allSquadPlayers: [],
+			allSquadPlayers: [{ name: "goku", id: "123s" }],
 			playerOneDisabled: false,
 			playerTwoDisabled: false,
 		},

@@ -91,16 +91,10 @@ const socketConnectionController = {
 		selectedSquadPlayerId?: string
 	) => {
 		console.log(
-			"🚀 ~ file: socketConnectionController.ts ~ line 80 ~ selectedSquadPlayerId",
+			"data-recieved in action_on_player",
+			roomId,
+			playerId,
 			selectedSquadPlayerId
-		);
-		console.log(
-			"🚀 ~ file: socketConnectionController.ts ~ line 80 ~ playerId",
-			playerId
-		);
-		console.log(
-			"🚀 ~ file: socketConnectionController.ts ~ line 80 ~ roomId",
-			roomId
 		);
 		try {
 		} catch (err) {

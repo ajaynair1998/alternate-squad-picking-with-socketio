@@ -1,7 +1,10 @@
+import { DefaultEventsMap } from "@socket.io/component-emitter";
+import { io, Socket } from "socket.io-client";
+
 export interface IStore {
 	socketStore: {
 		data: {
-			socket: any;
+			socket: Socket<DefaultEventsMap, DefaultEventsMap> | undefined | null;
 			roomId: any;
 			playerId: any;
 			playerOneSquad: any[];
