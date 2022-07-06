@@ -12,6 +12,9 @@ export interface IStore {
 			allSquadPlayers: any[];
 			playerOneDisabled: boolean;
 			playerTwoDisabled: boolean;
+			playerOneId: string;
+			playerTwoId: string;
+			all_data: any;
 		};
 	};
 }

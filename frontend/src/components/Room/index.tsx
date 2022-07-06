@@ -24,9 +24,9 @@ const Room = ({ playerId }: { playerId?: string }) => {
 	let { data } = useSelector((state: IStore) => state.socketStore);
 	return (
 		<Grid container direction={"row"} width={"70%"} mx={"auto"} mt={"200px"}>
-			<SingleColumnSelection color={"success"} selectedSide="playerOne" />
+			<SingleColumnSelection color={"success"} selectedSide={"playerOne"} />
 			<SingleColumnSelection selectedSide="selection-column" />
-			<SingleColumnSelection color={"error"} selectedSide="playerTwo" />
+			<SingleColumnSelection color={"error"} selectedSide={"playerTwo"} />
 		</Grid>
 	);
 };

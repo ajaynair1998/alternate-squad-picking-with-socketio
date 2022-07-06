@@ -8,6 +8,9 @@ import Room from "../../components/Room";
 import { useDispatch, useSelector } from "react-redux";
 import { IStore } from "../../helpers/interfaces";
 import {
+	setAllData,
+	setPlayerOneId,
+	setPlayerTwoId,
 	setSelectedAllSquadPlayers,
 	setSelectedPlayerId,
 	setSelectedPlayerOneSquad,
@@ -52,16 +55,16 @@ const PlayerOne = () => {
 					console.log(
 						"socket-connected",
 						socket.connected,
-						"response recieved",
-						console.log(data)
+						"response recieved"
 					);
-					console.log("data recieved from server", data.data);
 
 					if (data && data.data && data.data.id) {
 						dispatch(setSelectedAllSquadPlayers(data.data.playersAvailable));
 						dispatch(setSelectedPlayerOneSquad(data.data.playerOneSquad));
-
+						dispatch(setPlayerOneId(data.data.playerOneId));
+						dispatch(setPlayerTwoId(data.data.playerTwoId));
 						dispatch(setSelectedPlayerTwoSquad(data.data.playerTwoSquad));
+						dispatch(setAllData(data.data));
 					}
 				}
 			});

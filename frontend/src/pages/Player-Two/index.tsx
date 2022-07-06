@@ -8,6 +8,9 @@ import Room from "../../components/Room";
 import { useDispatch, useSelector } from "react-redux";
 import { IStore } from "../../helpers/interfaces";
 import {
+	setAllData,
+	setPlayerOneId,
+	setPlayerTwoId,
 	setSelectedAllSquadPlayers,
 	setSelectedPlayerId,
 	setSelectedPlayerOneSquad,
@@ -61,7 +64,10 @@ const PlayerTwo = () => {
 						dispatch(setSelectedAllSquadPlayers(data.data.playersAvailable));
 						dispatch(setSelectedPlayerOneSquad(data.data.playerOneSquad));
 
+						dispatch(setPlayerOneId(data.data.playerOneId));
+						dispatch(setPlayerTwoId(data.data.PlayerTwoId));
 						dispatch(setSelectedPlayerTwoSquad(data.data.playerTwoSquad));
+						dispatch(setAllData(data.data));
 					}
 				}
 			});
@@ -69,7 +75,7 @@ const PlayerTwo = () => {
 	}, [socket]);
 
 	useEffect(() => {
-		console.log("data changed");
+		console.log("playerId or roomId changed");
 		if (data.socket) {
 			data?.socket?.emit("join-game", {
 				playerId: data.playerId,

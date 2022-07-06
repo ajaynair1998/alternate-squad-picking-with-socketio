@@ -12,6 +12,9 @@ export const SocketDataSlice = createSlice({
 			allSquadPlayers: {},
 			playerOneDisabled: false,
 			playerTwoDisabled: false,
+			playerOneId: "",
+			playerTwoId: "",
+			all_data: {},
 		},
 	},
 	reducers: {
@@ -40,6 +43,15 @@ export const SocketDataSlice = createSlice({
 		setPlayerTwoDisabled: (state: any, action: any) => {
 			state.data.playerTwoDisabled = action.payload;
 		},
+		setPlayerTwoId: (state: any, action: any) => {
+			state.data.playerTwoId = action.payload;
+		},
+		setPlayerOneId: (state: any, action: any) => {
+			state.data.playerOneId = action.payload;
+		},
+		setAllData: (state: any, action: any) => {
+			state.data.all_data = action.payload;
+		},
 	},
 });
 
@@ -52,5 +64,8 @@ export const {
 	setSelectedAllSquadPlayers,
 	setPlayerOneDisabled,
 	setPlayerTwoDisabled,
+	setPlayerOneId,
+	setPlayerTwoId,
+	setAllData,
 } = SocketDataSlice.actions;
 export default SocketDataSlice.reducer;

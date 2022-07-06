@@ -31,21 +31,33 @@ interface IProps {
 
 const SingleColumnSelection = ({ color, selectedSide }: IProps) => {
 	let { data } = useSelector((store: IStore) => store.socketStore);
+	console.log(
+		"🚀 ~ file: index.tsx ~ line 34 ~ SingleColumnSelection ~ data",
+		data
+	);
 	let [players, setPlayers] = useState<{ name: string; id: string }[]>([]);
 	let [disabled, setDisabled] = useState<boolean>(false);
 
 	useEffect(() => {
-		if (selectedSide === "playerOne") {
-			setPlayers(data.playerOneSquad);
-			setDisabled(data.playerOneDisabled);
-		} else if (selectedSide == "playerTwo") {
-			setPlayers(data.playerTwoSquad);
-			setDisabled(data.playerTwoDisabled);
-		}
-
 		if (selectedSide === "selection-column") {
 			setPlayers(data.allSquadPlayers);
 			setDisabled(false);
+		}
+
+		if (selectedSide === "playerTwo") {
+			if (data.playerId === data.all_data.playerTwoId) {
+				setPlayers(data.playerOneSquad);
+			} else if (data.playerId === data.playerOneId) {
+				setPlayers(data.playerTwoSquad);
+			}
+		}
+
+		if (selectedSide === "playerOne") {
+			if (data.playerId === data.playerOneId) {
+				setPlayers(data.playerOneSquad);
+			} else if (data.playerId === data.all_data.playerTwoId) {
+				setPlayers(data.playerTwoSquad);
+			}
 		}
 	}, [data]);
 
