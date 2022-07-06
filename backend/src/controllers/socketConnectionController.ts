@@ -61,6 +61,15 @@ const socketConnectionController = {
 				sdf3: { id: "sdf3", name: "virat" },
 				sdf4: { id: "sdf4", name: "goku" },
 				sdf5: { id: "sdf5", name: "vegeta" },
+				sdf6: { id: "sdf6", name: "naruto" },
+				sdf7: { id: "sdf7", name: "piccolo" },
+				sdf8: { id: "sdf8", name: "conor" },
+				sdf9: { id: "sdf9", name: "khabib" },
+				sdf10: { id: "sdf10", name: "gsp" },
+				sdf11: { id: "sdf11", name: "olievera" },
+				sdf12: { id: "sdf12", name: "chandler" },
+				sdf13: { id: "sdf13", name: "bisping" },
+				sdf14: { id: "sdf14", name: "izzy" },
 			};
 			const room: IRoom = {
 				id: "room-one",
