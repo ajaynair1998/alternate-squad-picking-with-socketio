@@ -9,7 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { IStore } from "../../helpers/interfaces";
 import {
 	setAllData,
+	setPlayerOneDisabled,
 	setPlayerOneId,
+	setPlayerTwoDisabled,
 	setPlayerTwoId,
 	setSelectedAllSquadPlayers,
 	setSelectedPlayerId,
@@ -17,6 +19,7 @@ import {
 	setSelectedPlayerTwoSquad,
 	setSelectedroomId,
 	setSelectedSocket,
+	setTimer,
 } from "../../redux/reducers/SocketDataReducer";
 
 const PlayerTwo = () => {
@@ -29,7 +32,6 @@ const PlayerTwo = () => {
 
 	useEffect(() => {
 		const newSocket = createSocket("room-one");
-		console.log(data);
 		newSocket?.emit("join-game", {
 			playerId: data.playerId,
 			roomId: data.roomId,
@@ -55,10 +57,9 @@ const PlayerTwo = () => {
 					console.log(
 						"socket-connected",
 						socket.connected,
-						"response recieved",
-						console.log(data)
+						"response recieved"
 					);
-					console.log("data recieved from server", data.data);
+					console.log("data recieved from server");
 
 					if (data && data.data && data.data.id) {
 						dispatch(setSelectedAllSquadPlayers(data.data.playersAvailable));
@@ -67,6 +68,10 @@ const PlayerTwo = () => {
 						dispatch(setPlayerOneId(data.data.playerOneId));
 						dispatch(setPlayerTwoId(data.data.PlayerTwoId));
 						dispatch(setSelectedPlayerTwoSquad(data.data.playerTwoSquad));
+						dispatch(setTimer(data.data.timer));
+
+						dispatch(setPlayerOneDisabled(!data.data.playerOneTurn));
+						dispatch(setPlayerTwoDisabled(!data.data.playerTwoTurn));
 						dispatch(setAllData(data.data));
 					}
 				}

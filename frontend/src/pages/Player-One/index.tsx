@@ -9,7 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { IStore } from "../../helpers/interfaces";
 import {
 	setAllData,
+	setPlayerOneDisabled,
 	setPlayerOneId,
+	setPlayerTwoDisabled,
 	setPlayerTwoId,
 	setSelectedAllSquadPlayers,
 	setSelectedPlayerId,
@@ -17,6 +19,7 @@ import {
 	setSelectedPlayerTwoSquad,
 	setSelectedroomId,
 	setSelectedSocket,
+	setTimer,
 } from "../../redux/reducers/SocketDataReducer";
 
 const PlayerOne = () => {
@@ -64,6 +67,9 @@ const PlayerOne = () => {
 						dispatch(setPlayerOneId(data.data.playerOneId));
 						dispatch(setPlayerTwoId(data.data.playerTwoId));
 						dispatch(setSelectedPlayerTwoSquad(data.data.playerTwoSquad));
+						dispatch(setPlayerOneDisabled(!data.data.playerOneTurn));
+						dispatch(setPlayerTwoDisabled(!data.data.playerTwoTurn));
+						dispatch(setTimer(data.data.timer));
 						dispatch(setAllData(data.data));
 					}
 				}
@@ -72,7 +78,7 @@ const PlayerOne = () => {
 	}, [socket]);
 
 	useEffect(() => {
-		console.log("data changed");
+		console.log("player or room id changed");
 		if (data.socket) {
 			data?.socket?.emit("join-game", {
 				playerId: data.playerId,

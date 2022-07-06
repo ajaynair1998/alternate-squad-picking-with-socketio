@@ -31,10 +31,6 @@ interface IProps {
 
 const SingleColumnSelection = ({ color, selectedSide }: IProps) => {
 	let { data } = useSelector((store: IStore) => store.socketStore);
-	console.log(
-		"🚀 ~ file: index.tsx ~ line 34 ~ SingleColumnSelection ~ data",
-		data
-	);
 	let [players, setPlayers] = useState<{ name: string; id: string }[]>([]);
 	let [disabled, setDisabled] = useState<boolean>(false);
 

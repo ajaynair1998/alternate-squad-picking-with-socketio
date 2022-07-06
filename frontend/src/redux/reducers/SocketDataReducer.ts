@@ -14,6 +14,7 @@ export const SocketDataSlice = createSlice({
 			playerTwoDisabled: false,
 			playerOneId: "",
 			playerTwoId: "",
+			timer: "",
 			all_data: {},
 		},
 	},
@@ -52,6 +53,9 @@ export const SocketDataSlice = createSlice({
 		setAllData: (state: any, action: any) => {
 			state.data.all_data = action.payload;
 		},
+		setTimer: (state: any, action: any) => {
+			state.data.timer = action.payload;
+		},
 	},
 });
 
@@ -67,5 +71,6 @@ export const {
 	setPlayerOneId,
 	setPlayerTwoId,
 	setAllData,
+	setTimer,
 } = SocketDataSlice.actions;
 export default SocketDataSlice.reducer;

@@ -14,6 +14,7 @@ export interface IStore {
 			playerTwoDisabled: boolean;
 			playerOneId: string;
 			playerTwoId: string;
+			timer: string;
 			all_data: any;
 		};
 	};

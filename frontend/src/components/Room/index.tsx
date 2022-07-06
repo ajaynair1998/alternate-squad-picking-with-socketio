@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import SingleColumnSelection from "../Selection";
 import { useSelector } from "react-redux";
@@ -22,6 +22,24 @@ export interface ISingleItemProps {
 
 const Room = ({ playerId }: { playerId?: string }) => {
 	let { data } = useSelector((state: IStore) => state.socketStore);
+	let [timer, setTimer] = useState<string>("");
+
+	useEffect(() => {
+		if (data.playerId === data.all_data.playerOneId) {
+			if (data.playerTwoDisabled) {
+				setTimer(data.timer);
+			} else {
+				setTimer("wait for the opponent to make a move");
+			}
+		}
+		if (data.playerId === data.all_data.playerTwoId) {
+			if (data.playerOneDisabled) {
+				setTimer(data.timer);
+			} else {
+				setTimer("Wait for the opponent to make a move");
+			}
+		}
+	}, [data.timer]);
 	return (
 		<React.Fragment>
 			<Box
@@ -34,6 +52,17 @@ const Room = ({ playerId }: { playerId?: string }) => {
 			>
 				{" "}
 				<Typography variant="h3">{data.playerId}</Typography>{" "}
+			</Box>
+			<Box
+				sx={{
+					width: "100%",
+					display: "flex",
+					flexDirection: "row",
+					justifyContent: "center",
+				}}
+			>
+				{" "}
+				<Typography variant="h3">{timer}</Typography>{" "}
 			</Box>
 			<Grid container direction={"row"} width={"70%"} mx={"auto"} mt={"200px"}>
 				<SingleColumnSelection color={"success"} selectedSide={"playerOne"} />

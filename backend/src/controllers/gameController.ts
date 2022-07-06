@@ -33,14 +33,44 @@ let gameController = {
 	): Promise<any> {
 		try {
 			await gameController.pass_control_to_player_one(roomId, params);
-			await delay(2000);
+			for (let i = 5; i > 0; i--) {
+				await delay(1000);
+				await this.change_timer_value(i, roomId, params);
+			}
 			await gameController.pass_control_to_player_two(roomId, params);
-			await delay(2000);
+			for (let i = 5; i > 0; i--) {
+				await delay(1000);
+				await this.change_timer_value(i, roomId, params);
+			}
 		} catch (err) {
 			console.log(err);
 		}
 	},
+	change_timer_value: async function (
+		timeLeft: number,
+		roomId: string,
+		params: IStartGameParams
+	): Promise<any> {
+		try {
+			let rooms: any = await database.get("rooms");
+			if (!rooms) {
+				return;
+			}
+			rooms = JSON.parse(rooms);
+			let selectedRoom: IRoom = rooms[roomId];
 
+			selectedRoom.timer = timeLeft;
+			rooms[roomId] = selectedRoom;
+			await database.set("rooms", JSON.stringify(rooms));
+			params.roomsIo
+				.to([roomId])
+				.emit("current-game-state", { data: selectedRoom });
+
+			return;
+		} catch (err) {
+			console.log(err);
+		}
+	},
 	pass_control_to_player_one: async function (
 		roomId: string,
 		params: IStartGameParams
