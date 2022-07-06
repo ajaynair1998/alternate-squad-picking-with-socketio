@@ -33,18 +33,6 @@ const defaultItems: ISingleItemProps[] = [
 
 const Room = ({ playerId }: { playerId?: string }) => {
 	let { data } = useSelector((state: IStore) => state.socketStore);
-	console.log("🚀 ~ file: index.tsx ~ line 35 ~ Room ~ data", data);
-	const handleClick = async (
-		selectedSquadPlayerId?: string,
-		roomId?: string
-	): Promise<boolean> => {
-		try {
-			return true;
-		} catch (err) {
-			console.log(err);
-			return false;
-		}
-	};
 	return (
 		<Grid container direction={"row"} width={"70%"} mx={"auto"} mt={"200px"}>
 			<SingleColumnSelection color={"success"} selectedSide="playerOne" />

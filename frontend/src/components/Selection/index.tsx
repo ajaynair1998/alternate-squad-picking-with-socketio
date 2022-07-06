@@ -35,10 +35,12 @@ const SingleColumnSelection = ({ color, selectedSide }: IProps) => {
 	let [disabled, setDisabled] = useState<boolean>(false);
 
 	useEffect(() => {
-		console.log(data);
 		if (selectedSide === "playerOne") {
 			setPlayers(data.playerOneSquad);
 			setDisabled(data.playerOneDisabled);
+		} else if (selectedSide == "playerTwo") {
+			setPlayers(data.playerTwoSquad);
+			setDisabled(data.playerTwoDisabled);
 		}
 
 		if (selectedSide === "selection-column") {
@@ -51,12 +53,12 @@ const SingleColumnSelection = ({ color, selectedSide }: IProps) => {
 		<Grid item xs={3} mx={"auto"}>
 			<Box sx={{ width: "100%" }}>
 				<Stack spacing={2}>
-					{players.map((item) => {
+					{Object.entries(players).map((item) => {
 						return (
 							<SingleItem
-								key={item.id}
-								id={item.id}
-								name={item.name}
+								key={item[0]}
+								id={item[0]}
+								name={item[1].name}
 								color={color}
 								disabled={disabled}
 								selectedSide={selectedSide}

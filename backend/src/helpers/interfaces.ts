@@ -1,4 +1,4 @@
-export interface IPlayers {
+export interface IPlayer {
 	name: string;
 	id: string;
 }
@@ -7,12 +7,13 @@ export interface IRoom {
 	id: string;
 	playerOneId: string;
 	playerTwoId: string;
-	playerOneSquad: IPlayers[];
-	playerTwoSquad: IPlayers[];
-	playersAvailable: IPlayers[];
+	playerOneSquad: { [key: string]: IPlayer };
+	playerTwoSquad: { [key: string]: IPlayer };
+	playersAvailable: { [key: string]: IPlayer };
 	playerOneTurn: boolean;
 	playerTwoTurn: boolean;
 	timer: number;
+	is_completed: boolean;
 }
 
 export interface IRooms {

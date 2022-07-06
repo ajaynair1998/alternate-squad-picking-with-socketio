@@ -11,10 +11,10 @@ import {
 	setSelectedAllSquadPlayers,
 	setSelectedPlayerId,
 	setSelectedPlayerOneSquad,
+	setSelectedPlayerTwoSquad,
 	setSelectedroomId,
 	setSelectedSocket,
 } from "../../redux/reducers/SocketDataReducer";
-import { isNullishCoalesce } from "typescript";
 
 const PlayerOne = () => {
 	let dispatch = useDispatch();
@@ -48,11 +48,14 @@ const PlayerOne = () => {
 		if (socket) {
 			socket.on("response-for-join-game", (data: any) => {
 				if (data) {
-					console.log("player-one-connected", socket.connected, data.data);
+					console.log("player-one-connected", socket.connected);
+					console.log("data recieved from server", data.data);
 
 					if (data && data.data && data.data.id) {
-						console.log(data.data.playersAvailable);
 						dispatch(setSelectedAllSquadPlayers(data.data.playersAvailable));
+						dispatch(setSelectedPlayerOneSquad(data.data.playerOneSquad));
+
+						dispatch(setSelectedPlayerTwoSquad(data.data.playerTwoSquad));
 					}
 				}
 			});
@@ -62,13 +65,12 @@ const PlayerOne = () => {
 	useEffect(() => {
 		console.log("data changed");
 		if (data.socket) {
-			console.log(data.roomId);
 			data?.socket?.emit("join-game", {
 				playerId: data.playerId,
 				roomId: data.roomId,
 			});
 		}
-	}, [data]);
+	}, [data.roomId, data.playerId]);
 
 	return (
 		<Box>

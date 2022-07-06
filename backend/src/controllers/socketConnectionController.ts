@@ -3,7 +3,7 @@ import { Socket } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import uniqid from "uniqid";
 import { database } from "../db";
-import { IPlayers, IRoom } from "../helpers/interfaces";
+import { IPlayer, IRoom } from "../helpers/interfaces";
 
 const socketConnectionController = {
 	main: (
@@ -25,17 +25,17 @@ const socketConnectionController = {
 				({ roomId, playerId, selectedSquadPlayerId }) => {
 					console.log("action-on-player");
 					socketConnectionController.action_on_player(
-						socket,
 						roomId,
 						playerId,
-						selectedSquadPlayerId
+						selectedSquadPlayerId,
+						socket
 					);
 				}
 			);
 
 			// When a player disconnects
 			socket.on("disconnect", () => {
-				// socketConnectionController.create_room(socket);
+				socketConnectionController.create_room(socket);
 				console.log("disconnected");
 			});
 		} catch (err) {
@@ -58,21 +58,22 @@ const socketConnectionController = {
 		socket?: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 	) => {
 		try {
-			let playersAvailable: IPlayers[] = [
-				{ id: "sdf3", name: "virat" },
-				{ id: "sdf4", name: "goku" },
-				{ id: "sdf5", name: "vegeta" },
-			];
+			let playersAvailable = {
+				sdf3: { id: "sdf3", name: "virat" },
+				sdf4: { id: "sdf4", name: "goku" },
+				sdf5: { id: "sdf5", name: "vegeta" },
+			};
 			const room: IRoom = {
 				id: "room-one",
-				playerOneSquad: [],
-				playerTwoSquad: [],
+				playerOneSquad: {},
+				playerTwoSquad: {},
 				playerOneId: "player-one",
 				playerTwoId: "player-two",
 				playersAvailable: playersAvailable,
 				playerOneTurn: false,
 				playerTwoTurn: false,
 				timer: 5,
+				is_completed: false,
 			};
 
 			const rooms = {
@@ -112,10 +113,10 @@ const socketConnectionController = {
 	},
 
 	action_on_player: async (
-		socket?: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
-		roomId?: string,
-		playerId?: string,
-		selectedSquadPlayerId?: string
+		roomId: string,
+		playerId: string,
+		selectedSquadPlayerId: string,
+		socket?: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 	) => {
 		console.log(
 			"data-recieved in action_on_player",
@@ -123,6 +124,47 @@ const socketConnectionController = {
 			playerId,
 			selectedSquadPlayerId
 		);
+
+		let rooms: any = await database.get("rooms");
+		if (!rooms) {
+			return;
+		}
+		rooms = JSON.parse(rooms);
+		if (roomId && rooms) {
+			let selectedRoom: IRoom = rooms[roomId];
+			console.log(
+				"🚀 ~ file: socketConnectionController.ts ~ line 134 ~ selectedRoom",
+				selectedRoom
+			);
+
+			let allPlayersThatAreAvailable = selectedRoom.playersAvailable;
+			console.log(
+				"🚀 ~ file: socketConnectionController.ts ~ line 140 ~ allPlayersThatAreAvailable",
+				allPlayersThatAreAvailable
+			);
+			let selectedPlayer = allPlayersThatAreAvailable[selectedSquadPlayerId];
+
+			delete allPlayersThatAreAvailable[selectedSquadPlayerId];
+			console.log(allPlayersThatAreAvailable);
+			if (playerId === "player-one") {
+				selectedRoom.playersAvailable = allPlayersThatAreAvailable;
+				selectedRoom.playerOneSquad[selectedSquadPlayerId] = selectedPlayer;
+				console.log("player-one-action", selectedRoom.playerOneSquad);
+			}
+			if (playerId === "player-two") {
+				selectedRoom.playersAvailable = allPlayersThatAreAvailable;
+				selectedRoom.playerTwoSquad[selectedSquadPlayerId] = selectedPlayer;
+			}
+			rooms[roomId] = selectedRoom;
+			console.log(
+				"🚀 ~ file: socketConnectionController.ts ~ line 159 ~ rooms",
+				rooms
+			);
+
+			await database.set("rooms", JSON.stringify(rooms));
+
+			socket?.emit("response-for-join-game", { data: selectedRoom });
+		}
 		try {
 		} catch (err) {
 			console.log(err);
