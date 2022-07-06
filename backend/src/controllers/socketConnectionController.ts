@@ -37,9 +37,8 @@ const socketConnectionController = {
 				}
 			);
 
-			// When a player disconnects
 			socket.on("disconnect", () => {
-				socketConnectionController.create_room(null, socket);
+				// socketConnectionController.create_room(null, socket);
 				console.log("disconnected");
 			});
 		} catch (err) {
@@ -88,7 +87,7 @@ const socketConnectionController = {
 				"room-one": room,
 			};
 			await database.set("rooms", JSON.stringify(rooms));
-			console.log("room created");
+			// console.log("room created");
 		} catch (err) {
 			console.log(err);
 		}
@@ -144,16 +143,18 @@ const socketConnectionController = {
 			if (roomId && rooms) {
 				socket?.join(roomId);
 				console.log("joined room", roomId);
-				let selectedRoom: IRoom = rooms[roomId];
+				let roomToBeSelected = rooms[roomId];
+				let selectedRoom: IRoom = { ...roomToBeSelected };
 				let allPlayersThatAreAvailable = selectedRoom.playersAvailable;
 				let selectedPlayer = allPlayersThatAreAvailable[selectedSquadPlayerId];
 
-				delete allPlayersThatAreAvailable[selectedSquadPlayerId];
-				if (playerId === "player-one") {
+				if (playerId === "player-one" && selectedRoom.playerOneTurn === true) {
+					delete allPlayersThatAreAvailable[selectedSquadPlayerId];
 					selectedRoom.playersAvailable = allPlayersThatAreAvailable;
 					selectedRoom.playerOneSquad[selectedSquadPlayerId] = selectedPlayer;
 				}
-				if (playerId === "player-two") {
+				if (playerId === "player-two" && selectedRoom.playerTwoTurn === true) {
+					delete allPlayersThatAreAvailable[selectedSquadPlayerId];
 					selectedRoom.playersAvailable = allPlayersThatAreAvailable;
 					selectedRoom.playerTwoSquad[selectedSquadPlayerId] = selectedPlayer;
 				}

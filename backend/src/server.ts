@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import cors from "cors";
 import { database } from "./db";
 import socketConnectionController from "./controllers/socketConnectionController";
+import gameController from "./controllers/gameController";
 //initialise connection
 database;
 dotenv.config();
@@ -24,7 +25,16 @@ const io = new Server(server, { cors: { origin: "*" } });
 
 //initializing the socket io connection
 let roomsIo = io.of("/rooms");
+let adminIo = io.of("/admin");
+
+// Starting the game room 'room-one'
+gameController.main({
+	roomsIo: roomsIo,
+	roomId: "room-one",
+	playerOneId: "player-one",
+	playerTwoId: "player-two",
+});
+
 roomsIo.on("connection", (socket) => {
-	console.log("connected to rooms namespace");
 	socketConnectionController.main(socket, roomsIo);
 });
