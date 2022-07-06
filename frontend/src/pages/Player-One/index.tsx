@@ -26,6 +26,7 @@ const PlayerOne = () => {
 
 	useEffect(() => {
 		const newSocket = createSocket("room-one");
+		console.log(data);
 		newSocket?.emit("join-game", {
 			playerId: data.playerId,
 			roomId: data.roomId,
@@ -46,9 +47,14 @@ const PlayerOne = () => {
 
 	useEffect(() => {
 		if (socket) {
-			socket.on("response-for-join-game", (data: any) => {
+			socket.on("current-game-state", (data: any) => {
 				if (data) {
-					console.log("player-one-connected", socket.connected);
+					console.log(
+						"socket-connected",
+						socket.connected,
+						"response recieved",
+						console.log(data)
+					);
 					console.log("data recieved from server", data.data);
 
 					if (data && data.data && data.data.id) {

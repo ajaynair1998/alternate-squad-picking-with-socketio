@@ -20,17 +20,6 @@ export interface ISingleItemProps {
 		| undefined;
 }
 
-const defaultItems: ISingleItemProps[] = [
-	{ name: "virat", id: "qwed23" },
-	{ name: "sehwag", id: "asf3ase" },
-	{ name: "dhoni", id: "qed23" },
-	{ name: "goku", id: "asffgase" },
-	{ name: "vegeta", id: "qwedjh23" },
-	{ name: "broly", id: "asfsa3ase" },
-	{ name: "chichi", id: "qedxc23" },
-	{ name: "gohan", id: "asffzxgase" },
-];
-
 const Room = ({ playerId }: { playerId?: string }) => {
 	let { data } = useSelector((state: IStore) => state.socketStore);
 	return (

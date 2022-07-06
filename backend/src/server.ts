@@ -23,6 +23,8 @@ let server = app.listen(port, () => {
 const io = new Server(server, { cors: { origin: "*" } });
 
 //initializing the socket io connection
-io.on("connection", (socket) => {
-	socketConnectionController.main(socket);
+let roomsIo = io.of("/rooms");
+roomsIo.on("connection", (socket) => {
+	console.log("connected to rooms namespace");
+	socketConnectionController.main(socket, roomsIo);
 });

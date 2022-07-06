@@ -5,7 +5,7 @@ export const SocketDataSlice = createSlice({
 	initialState: {
 		data: {
 			socket: null,
-			roomId: null,
+			roomId: "room-one",
 			playerId: null,
 			playerOneSquad: {},
 			playerTwoSquad: {},
