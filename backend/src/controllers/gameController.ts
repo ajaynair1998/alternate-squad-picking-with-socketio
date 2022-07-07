@@ -87,6 +87,7 @@ let gameController = {
 			let selectedRoom: IRoom = rooms[roomId];
 			selectedRoom.playerOneTurn = true;
 			selectedRoom.playerTwoTurn = false;
+			selectedRoom.player_one_actions_available = 1;
 
 			rooms[roomId] = selectedRoom;
 			await database.set("rooms", JSON.stringify(rooms));
@@ -114,6 +115,7 @@ let gameController = {
 			let selectedRoom: IRoom = rooms[roomId];
 			selectedRoom.playerOneTurn = false;
 			selectedRoom.playerTwoTurn = true;
+			selectedRoom.player_two_actions_available = 1;
 
 			rooms[roomId] = selectedRoom;
 			await database.set("rooms", JSON.stringify(rooms));

@@ -80,6 +80,8 @@ const socketConnectionController = {
 				playerOneTurn: false,
 				playerTwoTurn: false,
 				timer: 5,
+				player_one_actions_available: 0,
+				player_two_actions_available: 0,
 				is_completed: false,
 			};
 
@@ -148,15 +150,25 @@ const socketConnectionController = {
 				let allPlayersThatAreAvailable = selectedRoom.playersAvailable;
 				let selectedPlayer = allPlayersThatAreAvailable[selectedSquadPlayerId];
 
-				if (playerId === "player-one" && selectedRoom.playerOneTurn === true) {
+				if (
+					playerId === "player-one" &&
+					selectedRoom.playerOneTurn === true &&
+					selectedRoom.player_one_actions_available > 0
+				) {
 					delete allPlayersThatAreAvailable[selectedSquadPlayerId];
 					selectedRoom.playersAvailable = allPlayersThatAreAvailable;
 					selectedRoom.playerOneSquad[selectedSquadPlayerId] = selectedPlayer;
+					selectedRoom.player_one_actions_available = 0;
 				}
-				if (playerId === "player-two" && selectedRoom.playerTwoTurn === true) {
+				if (
+					playerId === "player-two" &&
+					selectedRoom.playerTwoTurn === true &&
+					selectedRoom.player_two_actions_available > 0
+				) {
 					delete allPlayersThatAreAvailable[selectedSquadPlayerId];
 					selectedRoom.playersAvailable = allPlayersThatAreAvailable;
 					selectedRoom.playerTwoSquad[selectedSquadPlayerId] = selectedPlayer;
+					selectedRoom.player_two_actions_available = 0;
 				}
 				rooms[roomId] = selectedRoom;
 				await database.set("rooms", JSON.stringify(rooms));
