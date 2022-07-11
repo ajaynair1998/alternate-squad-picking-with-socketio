@@ -49,8 +49,15 @@ let gameController = {
 			);
 			await gameController.pass_control_to_player_one(roomId, params);
 			for (let i = 5; i >= 0; i--) {
-				await delay(1000);
-				await this.change_timer_value(i, roomId, params);
+				let actionsLeft = await gameController.check_if_actions_left(
+					params.playerOneId,
+					roomId,
+					params
+				);
+				if (actionsLeft) {
+					await delay(1000);
+					await this.change_timer_value(i, roomId, params);
+				}
 			}
 			await gameController.assign_player_automatically_if_unresponsive(
 				params.playerOneId,
@@ -59,8 +66,15 @@ let gameController = {
 			);
 			await gameController.pass_control_to_player_two(roomId, params);
 			for (let i = 5; i >= 0; i--) {
-				await delay(1000);
-				await this.change_timer_value(i, roomId, params);
+				let actionsLeft = await gameController.check_if_actions_left(
+					params.playerTwoId,
+					roomId,
+					params
+				);
+				if (actionsLeft) {
+					await delay(1000);
+					await this.change_timer_value(i, roomId, params);
+				}
 			}
 		} catch (err) {
 			console.log(err);
@@ -96,8 +110,6 @@ let gameController = {
 		params: IStartGameParams
 	): Promise<any> {
 		try {
-			console.log("\x1b[32m%s\x1b[0m", "player one turn");
-
 			let rooms: any = await database.get("rooms");
 			if (!rooms) {
 				return;
@@ -125,7 +137,6 @@ let gameController = {
 		params: IStartGameParams
 	): Promise<any> {
 		try {
-			console.log("\x1b[32m%s\x1b[0m", "player two turn");
 			let rooms: any = await database.get("rooms");
 			if (!rooms) {
 				return;
@@ -234,6 +245,40 @@ let gameController = {
 			return;
 		} catch (err) {
 			console.log(err);
+		}
+	},
+	check_if_actions_left: async function (
+		playerId: string,
+		roomId: string,
+		params: IStartGameParams
+	): Promise<any> {
+		try {
+			console.log("\x1b[32m%s\x1b[0m", "checking if actions left");
+			let rooms: any = await database.get("rooms");
+			if (!rooms) {
+				return;
+			}
+			rooms = JSON.parse(rooms);
+
+			let selectedRoom: IRoom = rooms[roomId];
+			if (selectedRoom.playerOneId === playerId) {
+				if (selectedRoom.player_one_actions_available > 0) {
+					return true;
+				} else {
+					return false;
+				}
+			} else if (selectedRoom.playerTwoId === playerId) {
+				if (selectedRoom.player_two_actions_available > 0) {
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			return true;
+		} catch (err) {
+			console.log(err);
+			return true;
 		}
 	},
 };
