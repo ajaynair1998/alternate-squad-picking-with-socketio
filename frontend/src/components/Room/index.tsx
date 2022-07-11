@@ -40,6 +40,50 @@ const Room = ({ playerId }: { playerId?: string }) => {
 			}
 		}
 	}, [data.timer]);
+	if (data.is_completed === false) {
+		return (
+			<React.Fragment>
+				<Box
+					sx={{
+						width: "100%",
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "center",
+					}}
+				>
+					{" "}
+					<Typography variant="h3">{data.playerId}</Typography>{" "}
+				</Box>
+				<Box
+					sx={{
+						width: "100%",
+						display: "flex",
+						flexDirection: "row",
+						justifyContent: "center",
+					}}
+				>
+					{" "}
+					<Typography variant="h3">{timer}</Typography>{" "}
+				</Box>
+				<Grid
+					container
+					direction={"row"}
+					width={"70%"}
+					mx={"auto"}
+					mt={"200px"}
+				>
+					<SingleColumnSelection color={"success"} selectedSide={"playerOne"} />
+					<SingleColumnSelection selectedSide="selection-column" />
+					<SingleColumnSelection color={"error"} selectedSide={"playerTwo"} />
+				</Grid>
+			</React.Fragment>
+		);
+	} else {
+		return <RoomNotActive />;
+	}
+};
+
+const RoomNotActive = () => {
 	return (
 		<React.Fragment>
 			<Box
@@ -51,7 +95,9 @@ const Room = ({ playerId }: { playerId?: string }) => {
 				}}
 			>
 				{" "}
-				<Typography variant="h3">{data.playerId}</Typography>{" "}
+				<Typography variant="h3">
+					Room is not active or it is completed
+				</Typography>{" "}
 			</Box>
 			<Box
 				sx={{
@@ -62,13 +108,7 @@ const Room = ({ playerId }: { playerId?: string }) => {
 				}}
 			>
 				{" "}
-				<Typography variant="h3">{timer}</Typography>{" "}
 			</Box>
-			<Grid container direction={"row"} width={"70%"} mx={"auto"} mt={"200px"}>
-				<SingleColumnSelection color={"success"} selectedSide={"playerOne"} />
-				<SingleColumnSelection selectedSide="selection-column" />
-				<SingleColumnSelection color={"error"} selectedSide={"playerTwo"} />
-			</Grid>
 		</React.Fragment>
 	);
 };

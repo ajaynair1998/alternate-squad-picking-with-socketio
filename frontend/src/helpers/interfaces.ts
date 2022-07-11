@@ -16,6 +16,7 @@ export interface IStore {
 			playerTwoId: string;
 			timer: string;
 			all_data: any;
+			is_completed: boolean;
 		};
 	};
 }

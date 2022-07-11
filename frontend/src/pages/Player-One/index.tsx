@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { IStore } from "../../helpers/interfaces";
 import {
 	setAllData,
+	setIsCompleted,
 	setPlayerOneDisabled,
 	setPlayerOneId,
 	setPlayerTwoDisabled,
@@ -60,6 +61,9 @@ const PlayerOne = () => {
 						socket.connected,
 						"response recieved"
 					);
+					if (data && data.data && data.data.is_completed === true) {
+						dispatch(setIsCompleted(data.data.is_completed));
+					}
 
 					if (data && data.data && data.data.id) {
 						dispatch(setSelectedAllSquadPlayers(data.data.playersAvailable));

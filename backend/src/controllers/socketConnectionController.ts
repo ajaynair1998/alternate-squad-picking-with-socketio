@@ -111,11 +111,19 @@ const socketConnectionController = {
 			let roomData: any = await database.get("rooms");
 			if (roomData) {
 				roomData = JSON.parse(roomData);
-				let playerRoom = roomData[roomId];
+				let playerRoom: IRoom = roomData[roomId];
 				if (playerRoom) {
 					console.log("room found");
+					roomsIo.to(roomId).emit("current-game-state", { data: playerRoom });
+				} else if (!playerRoom) {
+					roomsIo.to(roomId).emit("current-game-state", {
+						data: {
+							status: 500,
+							message: "no room found",
+							is_completed: true,
+						},
+					});
 				}
-				roomsIo.to(roomId).emit("current-game-state", { data: playerRoom });
 			}
 		}
 		try {

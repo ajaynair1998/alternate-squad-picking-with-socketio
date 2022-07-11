@@ -14,6 +14,7 @@ export const SocketDataSlice = createSlice({
 			playerTwoDisabled: false,
 			playerOneId: "",
 			playerTwoId: "",
+			is_completed: false,
 			timer: "",
 			all_data: {},
 		},
@@ -56,6 +57,9 @@ export const SocketDataSlice = createSlice({
 		setTimer: (state: any, action: any) => {
 			state.data.timer = action.payload;
 		},
+		setIsCompleted: (state: any, action: any) => {
+			state.data.is_completed = action.payload;
+		},
 	},
 });
 
@@ -72,5 +76,6 @@ export const {
 	setPlayerTwoId,
 	setAllData,
 	setTimer,
+	setIsCompleted,
 } = SocketDataSlice.actions;
 export default SocketDataSlice.reducer;

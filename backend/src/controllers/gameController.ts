@@ -28,6 +28,10 @@ let gameController = {
 				params.roomId,
 				params
 			);
+			await gameController.change_game_state_to_completed(
+				params.roomId,
+				params
+			);
 		} catch (err) {
 			console.log(err);
 		}
@@ -148,7 +152,7 @@ let gameController = {
 		playerId: string,
 		roomId: string,
 		params: IStartGameParams
-	) {
+	): Promise<any> {
 		try {
 			let rooms: any = await database.get("rooms");
 			if (!rooms) {
@@ -201,6 +205,32 @@ let gameController = {
 			params.roomsIo
 				.to([roomId])
 				.emit("current-game-state", { data: selectedRoom });
+			return;
+		} catch (err) {
+			console.log(err);
+		}
+	},
+	change_game_state_to_completed: async function (
+		roomId: string,
+		params: IStartGameParams
+	): Promise<any> {
+		try {
+			console.log("\x1b[32m%s\x1b[0m", "game instance has completed");
+			let rooms: any = await database.get("rooms");
+			if (!rooms) {
+				return;
+			}
+			rooms = JSON.parse(rooms);
+
+			let selectedRoom: IRoom = rooms[roomId];
+			selectedRoom.is_completed = true;
+
+			rooms[roomId] = selectedRoom;
+			await database.set("rooms", JSON.stringify(rooms));
+			params.roomsIo
+				.to([roomId])
+				.emit("current-game-state", { data: selectedRoom });
+
 			return;
 		} catch (err) {
 			console.log(err);
