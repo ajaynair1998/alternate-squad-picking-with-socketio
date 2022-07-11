@@ -57,7 +57,7 @@ const socketConnectionController = {
 	) => {
 		try {
 			let playersAvailable = {
-				sdf3: { id: "sdf3", name: "virat", points: 1 },
+				sdf3: { id: "sdf3", name: "gohan", points: 1 },
 				sdf4: { id: "sdf4", name: "goku", points: 2 },
 				sdf5: { id: "sdf5", name: "vegeta", points: 3 },
 				sdf6: { id: "sdf6", name: "naruto", points: 4 },
