@@ -19,9 +19,15 @@ let gameController = {
 			// create the room
 			await socketConnectionController.create_room();
 
-			for (let i = 0; i < 10; i++) {
+			for (let i = 0; i < 6; i++) {
 				await this.game_loop(params.roomId, params);
 			}
+			// there will be a player not selected if we dont check after the loop is completed
+			await gameController.assign_player_automatically_if_unresponsive(
+				params.playerTwoId,
+				params.roomId,
+				params
+			);
 		} catch (err) {
 			console.log(err);
 		}
@@ -32,13 +38,23 @@ let gameController = {
 		params: IStartGameParams
 	): Promise<any> {
 		try {
+			await gameController.assign_player_automatically_if_unresponsive(
+				params.playerTwoId,
+				roomId,
+				params
+			);
 			await gameController.pass_control_to_player_one(roomId, params);
-			for (let i = 5; i > 0; i--) {
+			for (let i = 5; i >= 0; i--) {
 				await delay(1000);
 				await this.change_timer_value(i, roomId, params);
 			}
+			await gameController.assign_player_automatically_if_unresponsive(
+				params.playerOneId,
+				roomId,
+				params
+			);
 			await gameController.pass_control_to_player_two(roomId, params);
-			for (let i = 5; i > 0; i--) {
+			for (let i = 5; i >= 0; i--) {
 				await delay(1000);
 				await this.change_timer_value(i, roomId, params);
 			}
@@ -123,6 +139,68 @@ let gameController = {
 				.to([roomId])
 				.emit("current-game-state", { data: selectedRoom });
 
+			return;
+		} catch (err) {
+			console.log(err);
+		}
+	},
+	assign_player_automatically_if_unresponsive: async function (
+		playerId: string,
+		roomId: string,
+		params: IStartGameParams
+	) {
+		try {
+			let rooms: any = await database.get("rooms");
+			if (!rooms) {
+				return;
+			}
+			rooms = JSON.parse(rooms);
+			let roomToBeSelected = rooms[roomId];
+			let selectedRoom: IRoom = { ...roomToBeSelected };
+
+			if (selectedRoom.playerOneId === playerId) {
+				if (selectedRoom.player_one_actions_available > 0) {
+					let sortable: [string, IPlayer][] = [];
+					for (const playerId in selectedRoom.playersAvailable) {
+						sortable.push([playerId, selectedRoom.playersAvailable[playerId]]);
+					}
+					sortable.sort((a: any, b: any) => b[1].points - a[1].points);
+					let idOfPlayerWithMaxPoints = sortable[0][0];
+					let maxPlayerDetails = sortable[0][1];
+
+					// now add this player to player one's squad and delete it from the pool
+					selectedRoom.playerOneSquad[idOfPlayerWithMaxPoints] =
+						maxPlayerDetails;
+					delete selectedRoom.playersAvailable[idOfPlayerWithMaxPoints];
+
+					rooms[roomId] = selectedRoom;
+					await database.set("rooms", JSON.stringify(rooms));
+				} else {
+					return;
+				}
+			} else if (selectedRoom.playerTwoId === playerId) {
+				if (selectedRoom.player_two_actions_available > 0) {
+					let sortable: [string, IPlayer][] = [];
+					for (const playerId in selectedRoom.playersAvailable) {
+						sortable.push([playerId, selectedRoom.playersAvailable[playerId]]);
+					}
+					sortable.sort((a: any, b: any) => b[1].points - a[1].points);
+					let idOfPlayerWithMaxPoints = sortable[0][0];
+					let maxPlayerDetails = sortable[0][1];
+
+					// now add this player to player one's squad and delete it from the pool
+					selectedRoom.playerTwoSquad[idOfPlayerWithMaxPoints] =
+						maxPlayerDetails;
+					delete selectedRoom.playersAvailable[idOfPlayerWithMaxPoints];
+					rooms[roomId] = selectedRoom;
+					await database.set("rooms", JSON.stringify(rooms));
+				} else {
+					return;
+				}
+			}
+			params.roomsIo
+				.to([roomId])
+				.emit("current-game-state", { data: selectedRoom });
 			return;
 		} catch (err) {
 			console.log(err);

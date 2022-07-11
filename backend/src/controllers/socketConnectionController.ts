@@ -57,18 +57,18 @@ const socketConnectionController = {
 	) => {
 		try {
 			let playersAvailable = {
-				sdf3: { id: "sdf3", name: "virat" },
-				sdf4: { id: "sdf4", name: "goku" },
-				sdf5: { id: "sdf5", name: "vegeta" },
-				sdf6: { id: "sdf6", name: "naruto" },
-				sdf7: { id: "sdf7", name: "piccolo" },
-				sdf8: { id: "sdf8", name: "conor" },
-				sdf9: { id: "sdf9", name: "khabib" },
-				sdf10: { id: "sdf10", name: "gsp" },
-				sdf11: { id: "sdf11", name: "olievera" },
-				sdf12: { id: "sdf12", name: "chandler" },
-				sdf13: { id: "sdf13", name: "bisping" },
-				sdf14: { id: "sdf14", name: "izzy" },
+				sdf3: { id: "sdf3", name: "virat", points: 1 },
+				sdf4: { id: "sdf4", name: "goku", points: 2 },
+				sdf5: { id: "sdf5", name: "vegeta", points: 3 },
+				sdf6: { id: "sdf6", name: "naruto", points: 4 },
+				sdf7: { id: "sdf7", name: "piccolo", points: 5 },
+				sdf8: { id: "sdf8", name: "conor", points: 6 },
+				sdf9: { id: "sdf9", name: "khabib", points: 7 },
+				sdf10: { id: "sdf10", name: "gsp", points: 8 },
+				sdf11: { id: "sdf11", name: "olievera", points: 9 },
+				sdf12: { id: "sdf12", name: "chandler", points: 10 },
+				sdf13: { id: "sdf13", name: "bisping", points: 11 },
+				sdf14: { id: "sdf14", name: "izzy", points: 12 },
 			};
 			const room: IRoom = {
 				id: "room-one",

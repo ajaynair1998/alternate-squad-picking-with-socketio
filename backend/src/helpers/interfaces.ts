@@ -1,6 +1,7 @@
 export interface IPlayer {
 	name: string;
 	id: string;
+	points: number;
 }
 
 export interface IRoom {
