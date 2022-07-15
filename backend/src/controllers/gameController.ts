@@ -4,7 +4,7 @@ import { IPlayer, IRoom } from "../helpers/interfaces";
 import { Namespace } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import socketConnectionController from "./socketConnectionController";
-import { delay } from "../helpers";
+import { currentExactTime, delay } from "../helpers";
 
 interface IStartGameParams {
 	roomsIo: Namespace<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
@@ -17,7 +17,7 @@ let gameController = {
 	main: async function (params: IStartGameParams): Promise<any> {
 		try {
 			// create the room
-			await socketConnectionController.create_room();
+			await socketConnectionController.create_room(params.roomId);
 
 			for (let i = 0; i < 6; i++) {
 				await this.game_loop(params.roomId, params);
@@ -56,6 +56,14 @@ let gameController = {
 				);
 				if (actionsLeft) {
 					await delay(1000);
+					let currentTime = currentExactTime();
+					if (
+						roomId === "room-4000" ||
+						roomId === "room-3000" ||
+						roomId === "room-2000"
+					) {
+						console.log(currentTime);
+					}
 					await this.change_timer_value(i, roomId, params);
 				}
 			}
@@ -86,16 +94,35 @@ let gameController = {
 		params: IStartGameParams
 	): Promise<any> {
 		try {
-			let rooms: any = await database.get("rooms");
-			if (!rooms) {
+			let room: any = await database.get(roomId);
+			if (!room) {
 				return;
 			}
-			rooms = JSON.parse(rooms);
-			let selectedRoom: IRoom = rooms[roomId];
+			room = JSON.parse(room);
+			let selectedRoom: IRoom = room;
 
 			selectedRoom.timer = timeLeft;
-			rooms[roomId] = selectedRoom;
-			await database.set("rooms", JSON.stringify(rooms));
+			let time_list = selectedRoom.time_elapsed;
+			let timeNow = currentExactTime();
+			time_list.push([timeLeft, timeNow]);
+			selectedRoom.time_elapsed = time_list;
+			if (
+				roomId === "room-4000" ||
+				roomId === "room-3000" ||
+				roomId === "room-2000"
+			) {
+				console.log(timeNow);
+			}
+			await database.set(roomId, JSON.stringify(room));
+			let timeNowAfterSaving = currentExactTime();
+			if (
+				roomId === "room-4000" ||
+				roomId === "room-3000" ||
+				roomId === "room-2000"
+			) {
+				console.log(timeNowAfterSaving);
+			}
+
 			params.roomsIo
 				.to([roomId])
 				.emit("current-game-state", { data: selectedRoom });
@@ -110,19 +137,17 @@ let gameController = {
 		params: IStartGameParams
 	): Promise<any> {
 		try {
-			let rooms: any = await database.get("rooms");
-			if (!rooms) {
+			let room: any = await database.get(roomId);
+			if (!room) {
 				return;
 			}
-			rooms = JSON.parse(rooms);
+			room = JSON.parse(room);
 
-			let selectedRoom: IRoom = rooms[roomId];
+			let selectedRoom: IRoom = room;
 			selectedRoom.playerOneTurn = true;
 			selectedRoom.playerTwoTurn = false;
 			selectedRoom.player_one_actions_available = 1;
-
-			rooms[roomId] = selectedRoom;
-			await database.set("rooms", JSON.stringify(rooms));
+			await database.set(roomId, JSON.stringify(room));
 			params.roomsIo
 				.to([roomId])
 				.emit("current-game-state", { data: selectedRoom });
@@ -137,19 +162,18 @@ let gameController = {
 		params: IStartGameParams
 	): Promise<any> {
 		try {
-			let rooms: any = await database.get("rooms");
-			if (!rooms) {
+			let room: any = await database.get(roomId);
+			if (!room) {
 				return;
 			}
-			rooms = JSON.parse(rooms);
+			room = JSON.parse(room);
 
-			let selectedRoom: IRoom = rooms[roomId];
+			let selectedRoom: IRoom = room;
 			selectedRoom.playerOneTurn = false;
 			selectedRoom.playerTwoTurn = true;
 			selectedRoom.player_two_actions_available = 1;
 
-			rooms[roomId] = selectedRoom;
-			await database.set("rooms", JSON.stringify(rooms));
+			await database.set(roomId, JSON.stringify(room));
 			params.roomsIo
 				.to([roomId])
 				.emit("current-game-state", { data: selectedRoom });
@@ -165,12 +189,12 @@ let gameController = {
 		params: IStartGameParams
 	): Promise<any> {
 		try {
-			let rooms: any = await database.get("rooms");
-			if (!rooms) {
+			let room: any = await database.get(roomId);
+			if (!room) {
 				return;
 			}
-			rooms = JSON.parse(rooms);
-			let roomToBeSelected = rooms[roomId];
+			room = JSON.parse(room);
+			let roomToBeSelected = room;
 			let selectedRoom: IRoom = { ...roomToBeSelected };
 
 			if (selectedRoom.playerOneId === playerId) {
@@ -188,8 +212,7 @@ let gameController = {
 						maxPlayerDetails;
 					delete selectedRoom.playersAvailable[idOfPlayerWithMaxPoints];
 
-					rooms[roomId] = selectedRoom;
-					await database.set("rooms", JSON.stringify(rooms));
+					await database.set(roomId, JSON.stringify(room));
 				} else {
 					return;
 				}
@@ -207,8 +230,8 @@ let gameController = {
 					selectedRoom.playerTwoSquad[idOfPlayerWithMaxPoints] =
 						maxPlayerDetails;
 					delete selectedRoom.playersAvailable[idOfPlayerWithMaxPoints];
-					rooms[roomId] = selectedRoom;
-					await database.set("rooms", JSON.stringify(rooms));
+
+					await database.set(roomId, JSON.stringify(room));
 				} else {
 					return;
 				}
@@ -227,17 +250,16 @@ let gameController = {
 	): Promise<any> {
 		try {
 			console.log("\x1b[32m%s\x1b[0m", "game instance has completed");
-			let rooms: any = await database.get("rooms");
-			if (!rooms) {
+			let room: any = await database.get(roomId);
+			if (!room) {
 				return;
 			}
-			rooms = JSON.parse(rooms);
+			room = JSON.parse(room);
 
-			let selectedRoom: IRoom = rooms[roomId];
+			let selectedRoom: IRoom = room;
 			selectedRoom.is_completed = true;
 
-			rooms[roomId] = selectedRoom;
-			await database.set("rooms", JSON.stringify(rooms));
+			await database.set(roomId, JSON.stringify(room));
 			params.roomsIo
 				.to([roomId])
 				.emit("current-game-state", { data: selectedRoom });
@@ -253,14 +275,14 @@ let gameController = {
 		params: IStartGameParams
 	): Promise<any> {
 		try {
-			console.log("\x1b[32m%s\x1b[0m", "checking if actions left");
-			let rooms: any = await database.get("rooms");
-			if (!rooms) {
+			// console.log("\x1b[32m%s\x1b[0m", "checking if actions left");
+			let room: any = await database.get(roomId);
+			if (!room) {
 				return;
 			}
-			rooms = JSON.parse(rooms);
+			room = JSON.parse(room);
 
-			let selectedRoom: IRoom = rooms[roomId];
+			let selectedRoom: IRoom = room;
 			if (selectedRoom.playerOneId === playerId) {
 				if (selectedRoom.player_one_actions_available > 0) {
 					return true;

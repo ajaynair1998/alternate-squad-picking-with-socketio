@@ -47,6 +47,7 @@ const socketConnectionController = {
 	},
 
 	create_room: async (
+		roomId: string,
 		roomsIo?: Namespace<
 			DefaultEventsMap,
 			DefaultEventsMap,
@@ -80,15 +81,13 @@ const socketConnectionController = {
 				playerOneTurn: false,
 				playerTwoTurn: false,
 				timer: 5,
+				time_elapsed: [],
 				player_one_actions_available: 0,
 				player_two_actions_available: 0,
 				is_completed: false,
 			};
 
-			const rooms = {
-				"room-one": room,
-			};
-			await database.set("rooms", JSON.stringify(rooms));
+			await database.set(roomId, JSON.stringify(room));
 			// console.log("room created");
 		} catch (err) {
 			console.log(err);
@@ -108,10 +107,10 @@ const socketConnectionController = {
 		socket?.join(roomId);
 		console.log("joined room ", roomId);
 		if (socket) {
-			let roomData: any = await database.get("rooms");
+			let roomData: any = await database.get(roomId);
 			if (roomData) {
 				roomData = JSON.parse(roomData);
-				let playerRoom: IRoom = roomData[roomId];
+				let playerRoom: IRoom = roomData;
 				if (playerRoom) {
 					console.log("room found");
 					roomsIo.to(roomId).emit("current-game-state", { data: playerRoom });
@@ -145,15 +144,15 @@ const socketConnectionController = {
 		socket?: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 	) => {
 		try {
-			let rooms: any = await database.get("rooms");
-			if (!rooms) {
+			let room: any = await database.get(roomId);
+			if (!room) {
 				return;
 			}
-			rooms = JSON.parse(rooms);
-			if (roomId && rooms) {
+			room = JSON.parse(room);
+			if (roomId && room) {
 				socket?.join(roomId);
 				console.log("joined room", roomId);
-				let roomToBeSelected = rooms[roomId];
+				let roomToBeSelected = room;
 				let selectedRoom: IRoom = { ...roomToBeSelected };
 				let allPlayersThatAreAvailable = selectedRoom.playersAvailable;
 				let selectedPlayer = allPlayersThatAreAvailable[selectedSquadPlayerId];
@@ -178,8 +177,8 @@ const socketConnectionController = {
 					selectedRoom.playerTwoSquad[selectedSquadPlayerId] = selectedPlayer;
 					selectedRoom.player_two_actions_available = 0;
 				}
-				rooms[roomId] = selectedRoom;
-				await database.set("rooms", JSON.stringify(rooms));
+				room = selectedRoom;
+				await database.set(roomId, JSON.stringify(room));
 
 				roomsIo.to([roomId]).emit("current-game-state", { data: selectedRoom });
 				console.log("data sent to ", roomId);

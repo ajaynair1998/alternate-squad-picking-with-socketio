@@ -1,5 +1,6 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
+import uniqid from "uniqid";
 import router from "./routes";
 import { Server } from "socket.io";
 import cors from "cors";
@@ -28,6 +29,14 @@ let roomsIo = io.of("/rooms");
 let adminIo = io.of("/admin");
 
 // Starting the game room 'room-one'
+for (let i = 2; i < 100000; i++) {
+	gameController.main({
+		roomsIo: roomsIo,
+		roomId: `room-${i}`,
+		playerOneId: "player-one",
+		playerTwoId: "player-two",
+	});
+}
 gameController.main({
 	roomsIo: roomsIo,
 	roomId: "room-one",
