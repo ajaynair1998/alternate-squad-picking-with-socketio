@@ -106,23 +106,8 @@ let gameController = {
 			let timeNow = currentExactTime();
 			time_list.push([timeLeft, timeNow]);
 			selectedRoom.time_elapsed = time_list;
-			if (
-				roomId === "room-4000" ||
-				roomId === "room-3000" ||
-				roomId === "room-2000"
-			) {
-				console.log(timeNow);
-			}
 			await database.set(roomId, JSON.stringify(room));
 			let timeNowAfterSaving = currentExactTime();
-			if (
-				roomId === "room-4000" ||
-				roomId === "room-3000" ||
-				roomId === "room-2000"
-			) {
-				console.log(timeNowAfterSaving);
-			}
-
 			params.roomsIo
 				.to([roomId])
 				.emit("current-game-state", { data: selectedRoom });

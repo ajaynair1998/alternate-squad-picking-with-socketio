@@ -29,7 +29,7 @@ let roomsIo = io.of("/rooms");
 let adminIo = io.of("/admin");
 
 // Starting the game room 'room-one'
-for (let i = 2; i < 100000; i++) {
+for (let i = 2; i < 10000; i++) {
 	gameController.main({
 		roomsIo: roomsIo,
 		roomId: `room-${i}`,
